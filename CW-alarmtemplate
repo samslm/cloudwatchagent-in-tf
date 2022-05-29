@@ -1,0 +1,67 @@
+#################### Variable for alarm notification ##############
+variable "actionitem" {
+  description = "Send mail alert"
+  default     = "arn:aws:sns:us-east-1:745245420757:terraform"
+}
+
+############### create Cloudwatch alarm ##########################
+resource "aws_cloudwatch_metric_alarm" "bat" {
+  alarm_name          = "cpu is low -warning"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "40"
+
+  dimensions = {
+    InstanceId = "i-029944b99f4d19831"
+  }
+}
+resource "aws_cloudwatch_metric_alarm" "bat1" {
+  alarm_name          = "cpu is high critical"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "80"
+
+  dimensions = {
+    InstanceId = "i-029944b99f4d19831"
+  }
+
+  alarm_description = "This metric monitors ec2 cpu utilization"
+  alarm_actions     = ["${var.actionitem}"]
+}
+resource "aws_cloudwatch_metric_alarm" "instance-health-check" {
+  alarm_name          = "instance-health-check"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "StatusCheckFailed"
+  namespace           = "AWS/EC2"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "40"
+
+  dimensions = {
+    InstanceId = "i-029944b99f4d19831"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "disk" {
+  alarm_name          = "disk usage warning"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "disk_used_percent"
+  namespace           = "AWS/EC2"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "70"
+
+  dimensions = {
+    InstanceId = "i-029944b99f4d19831"
+  }
+}
